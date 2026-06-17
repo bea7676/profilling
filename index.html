@@ -32,7 +32,6 @@
             box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.04);
             padding: 2rem 2rem 1.8rem;
             border: 1px solid rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(2px);
         }
 
         .drop-zone {
@@ -143,25 +142,27 @@
         .carousel-viewport {
             overflow: hidden;
             border-radius: 24px;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            background: #f8f9fc;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
             margin-bottom: 1.5rem;
             position: relative;
-            min-height: 400px;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
         }
 
         .carousel-track {
             display: flex;
             transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
             will-change: transform;
+            width: 100%;
         }
 
         .slide {
             flex: 0 0 100%;
-            padding: 1.5rem 1.8rem 1.8rem;
-            background: #ffffff;
-            border-radius: 24px;
-            min-height: 400px;
+            padding: 2rem;
+            background: #f8f9fc;
+            min-height: 480px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -172,20 +173,22 @@
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border: 1px solid #e8edf4;
             background: white;
             display: block;
         }
 
         .slide .page-label {
-            margin-top: 0.9rem;
-            font-size: 0.8rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
             color: #4d637e;
-            background: #f0f4fc;
-            padding: 0.2rem 1.2rem;
+            background: #ffffff;
+            padding: 0.3rem 1.5rem;
             border-radius: 30px;
             font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8edf4;
         }
 
         .empty-state {
@@ -193,7 +196,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 380px;
+            min-height: 420px;
             color: #6f85a2;
             padding: 1.5rem;
             text-align: center;
@@ -298,13 +301,39 @@
             color: #1f3a66;
         }
 
+        /* Loading state */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #1f3a66;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         @media (max-width: 600px) {
             .pdf-carousel {
                 padding: 1.2rem 1rem;
             }
             .slide {
                 padding: 1rem;
-                min-height: 300px;
+                min-height: 320px;
             }
             .drop-zone {
                 padding: 1.8rem 1rem;
@@ -316,6 +345,9 @@
             }
             .drop-zone i {
                 font-size: 2.4rem;
+            }
+            .carousel-viewport {
+                min-height: 350px;
             }
         }
     </style>
@@ -383,6 +415,7 @@
             let totalSlides = 0;
             let isTransitioning = false;
             let pdfDoc = null;
+            let isRendering = false;
 
             // PDF.js worker
             const pdfjsLib = window.pdfjsLib;
@@ -406,7 +439,7 @@
 
             // ----- go to slide -----
             function goToSlide(index) {
-                if (isTransitioning || totalSlides === 0) return;
+                if (isTransitioning || totalSlides === 0 || isRendering) return;
                 if (index < 0) index = totalSlides - 1;
                 if (index >= totalSlides) index = 0;
                 if (index === currentIndex) return;
@@ -419,11 +452,17 @@
 
             // ----- render PDF pages -----
             async function renderPDFPages(arrayBuffer) {
+                if (isRendering) return;
+                isRendering = true;
+
                 try {
+                    // Show loading state
+                    fileStatus.textContent = '⏳ Processing PDF...';
+
                     // Load the PDF document
                     pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     totalSlides = pdfDoc.numPages;
-                    
+
                     if (totalSlides === 0) {
                         throw new Error('PDF has no pages');
                     }
@@ -436,10 +475,11 @@
                     // Create slides for each page
                     for (let pageNum = 1; pageNum <= totalSlides; pageNum++) {
                         const page = await pdfDoc.getPage(pageNum);
-                        
-                        // Calculate scale to fit nicely
+
+                        // Calculate optimal scale
                         const viewport = page.getViewport({ scale: 1.0 });
-                        const scale = Math.min(1.5, (600 / viewport.width));
+                        const maxWidth = 700;
+                        const scale = Math.min(1.8, maxWidth / viewport.width);
                         const scaledViewport = page.getViewport({ scale: scale });
 
                         // Create canvas
@@ -448,15 +488,16 @@
                         canvas.width = scaledViewport.width;
                         canvas.height = scaledViewport.height;
                         canvas.style.width = '100%';
-                        canvas.style.maxWidth = '600px';
+                        canvas.style.maxWidth = '700px';
                         canvas.style.height = 'auto';
+                        canvas.style.display = 'block';
 
                         // Render PDF page to canvas
                         const renderContext = {
                             canvasContext: context,
                             viewport: scaledViewport
                         };
-                        
+
                         await page.render(renderContext).promise;
 
                         // Create slide container
@@ -466,8 +507,9 @@
                         slide.style.flexDirection = 'column';
                         slide.style.alignItems = 'center';
                         slide.style.justifyContent = 'center';
-                        slide.style.padding = '1rem';
-                        slide.style.minHeight = '400px';
+                        slide.style.padding = '1.5rem';
+                        slide.style.minHeight = '420px';
+                        slide.style.width = '100%';
 
                         // Create wrapper
                         const wrapper = document.createElement('div');
@@ -475,7 +517,7 @@
                         wrapper.style.display = 'flex';
                         wrapper.style.flexDirection = 'column';
                         wrapper.style.alignItems = 'center';
-                        wrapper.style.maxWidth = '600px';
+                        wrapper.style.maxWidth = '750px';
 
                         // Append canvas
                         wrapper.appendChild(canvas);
@@ -508,6 +550,8 @@
                     console.error('PDF error:', error);
                     alert('Could not render PDF. Please try another file.\nError: ' + error.message);
                     resetToEmpty();
+                } finally {
+                    isRendering = false;
                 }
             }
 
@@ -534,6 +578,7 @@
                 nextBtn.disabled = true;
                 fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> no PDF`;
                 fileStatus.textContent = '📄 no file loaded';
+                isRendering = false;
             }
 
             // ----- handle file (from input or drop) -----
@@ -542,7 +587,7 @@
                     alert('No file selected.');
                     return;
                 }
-                
+
                 if (file.type !== 'application/pdf') {
                     alert('Please select a valid PDF file. Selected: ' + file.type);
                     return;
@@ -634,7 +679,7 @@
 
             // keyboard
             document.addEventListener('keydown', (e) => {
-                if (totalSlides === 0) return;
+                if (totalSlides === 0 || isRendering) return;
                 if (e.key === 'ArrowLeft') {
                     e.preventDefault();
                     goToSlide(currentIndex - 1);
@@ -648,12 +693,12 @@
             let startX = 0,
                 isSwiping = false;
             viewport.addEventListener('touchstart', (e) => {
-                if (totalSlides === 0) return;
+                if (totalSlides === 0 || isRendering) return;
                 startX = e.touches[0].clientX;
                 isSwiping = true;
             }, { passive: true });
             viewport.addEventListener('touchend', (e) => {
-                if (!isSwiping || totalSlides === 0) return;
+                if (!isSwiping || totalSlides === 0 || isRendering) return;
                 isSwiping = false;
                 const endX = e.changedTouches[0].clientX;
                 const diff = startX - endX;
@@ -667,13 +712,13 @@
             let mouseDown = false,
                 mouseStartX = 0;
             viewport.addEventListener('mousedown', (e) => {
-                if (totalSlides === 0) return;
+                if (totalSlides === 0 || isRendering) return;
                 mouseDown = true;
                 mouseStartX = e.clientX;
                 e.preventDefault();
             });
             viewport.addEventListener('mouseup', (e) => {
-                if (!mouseDown || totalSlides === 0) return;
+                if (!mouseDown || totalSlides === 0 || isRendering) return;
                 mouseDown = false;
                 const diff = mouseStartX - e.clientX;
                 if (Math.abs(diff) > 40) {
