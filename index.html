@@ -1,646 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Carousel · Drag & Drop Showcase</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Carousel · Drag & Drop Showcase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-    body {
-      background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-    }
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
 
-    .pdf-carousel {
-      max-width: 960px;
-      width: 100%;
-      background: #fcfcfd;
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.04);
-      padding: 2rem 2rem 1.8rem;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(2px);
-      transition: 0.2s;
-    }
+        .pdf-carousel {
+            max-width: 960px;
+            width: 100%;
+            background: #fcfcfd;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.04);
+            padding: 2rem 2rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+        }
 
-    /* DRAG & DROP ZONE – primary interaction */
-    .drop-zone {
-      background: #f2f7ff;
-      border: 3px dashed #b8cae0;
-      border-radius: 32px;
-      padding: 2.4rem 1.8rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      transition: all 0.2s ease;
-      cursor: pointer;
-      position: relative;
-    }
+        .drop-zone {
+            background: #f2f7ff;
+            border: 3px dashed #b8cae0;
+            border-radius: 32px;
+            padding: 2.4rem 1.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
 
-    .drop-zone.dragover {
-      border-color: #1f3a66;
-      background: #e3edfc;
-      transform: scale(1.01);
-      box-shadow: 0 0 0 4px rgba(31, 58, 102, 0.08);
-    }
+        .drop-zone.dragover {
+            border-color: #1f3a66;
+            background: #e3edfc;
+            transform: scale(1.01);
+            box-shadow: 0 0 0 4px rgba(31, 58, 102, 0.08);
+        }
 
-    .drop-zone i {
-      font-size: 3.2rem;
-      color: #1f3a66;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
+        .drop-zone i {
+            font-size: 3.2rem;
+            color: #1f3a66;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
 
-    .drop-zone h3 {
-      font-weight: 500;
-      color: #0b1a2b;
-      font-size: 1.3rem;
-    }
+        .drop-zone h3 {
+            font-weight: 500;
+            color: #0b1a2b;
+            font-size: 1.3rem;
+        }
 
-    .drop-zone p {
-      color: #4d637e;
-      font-size: 0.95rem;
-      margin-top: 0.2rem;
-    }
+        .drop-zone p {
+            color: #4d637e;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
 
-    .drop-zone .browse-btn {
-      background: #1f3a66;
-      color: white;
-      border: none;
-      padding: 0.55rem 2rem;
-      border-radius: 60px;
-      font-weight: 500;
-      margin-top: 1rem;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: 0.15s;
-      display: inline-block;
-      pointer-events: auto;
-    }
+        .drop-zone .browse-btn {
+            background: #1f3a66;
+            color: white;
+            border: none;
+            padding: 0.55rem 2rem;
+            border-radius: 60px;
+            font-weight: 500;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-block;
+            pointer-events: auto;
+        }
 
-    .drop-zone .browse-btn:hover {
-      background: #142b4a;
-      transform: scale(1.02);
-    }
+        .drop-zone .browse-btn:hover {
+            background: #142b4a;
+            transform: scale(1.02);
+        }
 
-    #fileInput {
-      display: none;
-    }
+        #fileInput {
+            display: none;
+        }
 
-    .drop-zone .file-status {
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
-      color: #1f3a66;
-      font-weight: 450;
-      background: #eaf0f8;
-      padding: 0.2rem 1.2rem;
-      border-radius: 40px;
-      display: inline-block;
-    }
+        .drop-zone .file-status {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: #1f3a66;
+            font-weight: 450;
+            background: #eaf0f8;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+        }
 
-    /* header */
-    .pdf-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #d0d7e2;
-      padding-bottom: 0.8rem;
-      margin-bottom: 1.6rem;
-      flex-wrap: wrap;
-    }
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #d0d7e2;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.6rem;
+            flex-wrap: wrap;
+        }
 
-    .pdf-header h2 {
-      font-weight: 500;
-      font-size: 1.2rem;
-      color: #1f2a3e;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .pdf-header h2 {
+            font-weight: 500;
+            font-size: 1.2rem;
+            color: #1f2a3e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .pdf-header h2 i {
-      color: #2d4b7c;
-    }
+        .pdf-header h2 i {
+            color: #2d4b7c;
+        }
 
-    .page-indicator {
-      background: #eef2f7;
-      padding: 0.3rem 1.2rem;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #1f2a3e;
-    }
+        .page-indicator {
+            background: #eef2f7;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1f2a3e;
+        }
 
-    /* carousel viewport */
-    .carousel-viewport {
-      overflow: hidden;
-      border-radius: 24px;
-      background: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-      margin-bottom: 1.5rem;
-      position: relative;
-      min-height: 320px;
-    }
+        .carousel-viewport {
+            overflow: hidden;
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            margin-bottom: 1.5rem;
+            position: relative;
+            min-height: 400px;
+        }
 
-    .carousel-track {
-      display: flex;
-      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-      will-change: transform;
-    }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+            will-change: transform;
+        }
 
-    .slide {
-      flex: 0 0 100%;
-      padding: 1.5rem 1.8rem 1.8rem;
-      background: #ffffff;
-      border-radius: 24px;
-      min-height: 380px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+        .slide {
+            flex: 0 0 100%;
+            padding: 1.5rem 1.8rem 1.8rem;
+            background: #ffffff;
+            border-radius: 24px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .slide canvas {
-      max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-      border: 1px solid #eef2f7;
-      background: white;
-    }
+        .slide canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e8edf4;
+            background: white;
+            display: block;
+        }
 
-    .slide .page-label {
-      margin-top: 0.9rem;
-      font-size: 0.8rem;
-      color: #4d637e;
-      background: #f0f4fc;
-      padding: 0.2rem 1.2rem;
-      border-radius: 30px;
-      font-weight: 500;
-    }
+        .slide .page-label {
+            margin-top: 0.9rem;
+            font-size: 0.8rem;
+            color: #4d637e;
+            background: #f0f4fc;
+            padding: 0.2rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+        }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 320px;
-      color: #6f85a2;
-      padding: 1.5rem;
-      text-align: center;
-    }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 380px;
+            color: #6f85a2;
+            padding: 1.5rem;
+            text-align: center;
+        }
 
-    .empty-state i {
-      font-size: 4rem;
-      color: #b8cae0;
-      margin-bottom: 0.8rem;
-    }
+        .empty-state i {
+            font-size: 4rem;
+            color: #b8cae0;
+            margin-bottom: 0.8rem;
+        }
 
-    .empty-state h4 {
-      font-weight: 400;
-      color: #2b405d;
-    }
+        .empty-state h4 {
+            font-weight: 400;
+            color: #2b405d;
+        }
 
-    /* controls */
-    .carousel-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1.8rem;
-      margin: 0.4rem 0 0.2rem;
-    }
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.8rem;
+            margin: 0.4rem 0 0.2rem;
+        }
 
-    .carousel-controls button {
-      background: #f0f4fc;
-      border: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 60px;
-      font-size: 1.3rem;
-      color: #1f3a66;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
-      border: 1px solid #d9e2ef;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+        .carousel-controls button {
+            background: #f0f4fc;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            color: #1f3a66;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #d9e2ef;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .carousel-controls button:hover:not(:disabled) {
-      background: #1f3a66;
-      color: white;
-      border-color: #1f3a66;
-      transform: scale(1.03);
-      box-shadow: 0 8px 16px rgba(28, 49, 79, 0.15);
-    }
+        .carousel-controls button:hover:not(:disabled) {
+            background: #1f3a66;
+            color: white;
+            border-color: #1f3a66;
+            transform: scale(1.03);
+            box-shadow: 0 8px 16px rgba(28, 49, 79, 0.15);
+        }
 
-    .carousel-controls button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none;
-    }
+        .carousel-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-    .carousel-controls .dots {
-      display: flex;
-      gap: 12px;
-    }
+        .carousel-controls .dots {
+            display: flex;
+            gap: 12px;
+        }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 20px;
-      background: #ccd7e6;
-      transition: all 0.25s;
-      cursor: pointer;
-      border: none;
-      padding: 0;
-    }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 20px;
+            background: #ccd7e6;
+            transition: all 0.25s;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
 
-    .dot.active {
-      background: #1f3a66;
-      width: 26px;
-    }
+        .dot.active {
+            background: #1f3a66;
+            width: 26px;
+        }
 
-    .dot:hover {
-      background: #6f89b0;
-    }
+        .dot:hover {
+            background: #6f89b0;
+        }
 
-    .pdf-footer {
-      margin-top: 1.5rem;
-      font-size: 0.75rem;
-      color: #66758b;
-      text-align: center;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
+        .pdf-footer {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #66758b;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
 
-    .pdf-footer i {
-      margin: 0 4px;
-    }
+        .pdf-footer i {
+            margin: 0 4px;
+        }
 
-    .file-info {
-      background: #eef3fa;
-      border-radius: 40px;
-      padding: 0.2rem 1rem;
-      font-size: 0.8rem;
-      color: #1f3a66;
-    }
+        .file-info {
+            background: #eef3fa;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            color: #1f3a66;
+        }
 
-    @media (max-width: 600px) {
-      .pdf-carousel { padding: 1.2rem 1rem; }
-      .slide { padding: 1rem; min-height: 280px; }
-      .drop-zone { padding: 1.8rem 1rem; }
-      .carousel-controls button { width: 40px; height: 40px; font-size: 1rem; }
-      .drop-zone i { font-size: 2.4rem; }
-    }
-  </style>
+        @media (max-width: 600px) {
+            .pdf-carousel {
+                padding: 1.2rem 1rem;
+            }
+            .slide {
+                padding: 1rem;
+                min-height: 300px;
+            }
+            .drop-zone {
+                padding: 1.8rem 1rem;
+            }
+            .carousel-controls button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            .drop-zone i {
+                font-size: 2.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="pdf-carousel">
+    <div class="pdf-carousel">
 
-    <!-- DRAG & DROP ZONE -->
-    <div class="drop-zone" id="dropZone">
-      <i class="fas fa-cloud-upload-alt"></i>
-      <h3>Drop your PDF here</h3>
-      <p>or click to browse — each page becomes a slide</p>
-      <button class="browse-btn" id="browseBtn"><i class="fas fa-folder-open"></i>  Choose PDF</button>
-      <input type="file" id="fileInput" accept=".pdf,application/pdf">
-      <div class="file-status" id="fileStatus">📄 no file loaded</div>
-    </div>
-
-    <!-- header -->
-    <div class="pdf-header">
-      <h2><i class="fas fa-layer-group"></i> PDF Carousel</h2>
-      <span class="page-indicator" id="pageIndicator">0 / 0</span>
-    </div>
-
-    <!-- carousel viewport -->
-    <div class="carousel-viewport" id="carouselViewport">
-      <div class="carousel-track" id="carouselTrack">
-        <div class="slide empty-state" id="emptySlide">
-          <i class="fas fa-file-pdf"></i>
-          <h4>Drop a PDF to extract pages</h4>
-          <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
+        <!-- DRAG & DROP ZONE -->
+        <div class="drop-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drop your PDF here</h3>
+            <p>or click to browse — each page becomes a slide</p>
+            <button class="browse-btn" id="browseBtn"><i class="fas fa-folder-open"></i> Choose PDF</button>
+            <input type="file" id="fileInput" accept=".pdf,application/pdf">
+            <div class="file-status" id="fileStatus">📄 no file loaded</div>
         </div>
-      </div>
+
+        <!-- header -->
+        <div class="pdf-header">
+            <h2><i class="fas fa-layer-group"></i> PDF Carousel</h2>
+            <span class="page-indicator" id="pageIndicator">0 / 0</span>
+        </div>
+
+        <!-- carousel viewport -->
+        <div class="carousel-viewport" id="carouselViewport">
+            <div class="carousel-track" id="carouselTrack">
+                <div class="slide empty-state" id="emptySlide">
+                    <i class="fas fa-file-pdf"></i>
+                    <h4>Drop a PDF to extract pages</h4>
+                    <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- controls -->
+        <div class="carousel-controls">
+            <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+            <div class="dots" id="dotsContainer"></div>
+            <button id="nextBtn" disabled><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="pdf-footer">
+            <span><i class="fas fa-print"></i> PDF page carousel · showcase</span>
+            <span class="file-info" id="fileInfo"><i class="far fa-file-pdf"></i> no PDF</span>
+        </div>
     </div>
 
-    <!-- controls -->
-    <div class="carousel-controls">
-      <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
-      <div class="dots" id="dotsContainer"></div>
-      <button id="nextBtn" disabled><i class="fas fa-chevron-right"></i></button>
-    </div>
+    <script>
+        (function() {
+            // ----- elements -----
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('dotsContainer');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileStatus = document.getElementById('fileStatus');
+            const fileInfo = document.getElementById('fileInfo');
+            const viewport = document.getElementById('carouselViewport');
 
-    <div class="pdf-footer">
-      <span><i class="fas fa-print"></i>  PDF page carousel · showcase</span>
-      <span class="file-info" id="fileInfo"><i class="far fa-file-pdf"></i> no PDF</span>
-    </div>
-  </div>
+            // ----- state -----
+            let currentIndex = 0;
+            let totalSlides = 0;
+            let isTransitioning = false;
+            let pdfDoc = null;
 
-  <script>
-    (function() {
-      // ----- elements -----
-      const track = document.getElementById('carouselTrack');
-      const dotsContainer = document.getElementById('dotsContainer');
-      const pageIndicator = document.getElementById('pageIndicator');
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const fileInput = document.getElementById('fileInput');
-      const dropZone = document.getElementById('dropZone');
-      const browseBtn = document.getElementById('browseBtn');
-      const fileStatus = document.getElementById('fileStatus');
-      const fileInfo = document.getElementById('fileInfo');
-      const viewport = document.getElementById('carouselViewport');
+            // PDF.js worker
+            const pdfjsLib = window.pdfjsLib;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-      // ----- state -----
-      let currentIndex = 0;
-      let totalSlides = 0;
-      let isTransitioning = false;
-      let pdfDoc = null;
-      let pageCanvases = [];
+            // ----- update UI (dots, indicator, buttons) -----
+            function updateUI() {
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('button');
+                    dot.className = `dot ${i === currentIndex ? 'active' : ''}`;
+                    dot.setAttribute('data-index', i);
+                    dot.setAttribute('aria-label', `Page ${i+1}`);
+                    dot.addEventListener('click', () => goToSlide(i));
+                    dotsContainer.appendChild(dot);
+                }
+                pageIndicator.textContent = totalSlides > 0 ? `${currentIndex + 1} / ${totalSlides}` : '0 / 0';
+                prevBtn.disabled = totalSlides === 0 || currentIndex === 0;
+                nextBtn.disabled = totalSlides === 0 || currentIndex === totalSlides - 1;
+            }
 
-      // PDF.js worker
-      const pdfjsLib = window.pdfjsLib;
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+            // ----- go to slide -----
+            function goToSlide(index) {
+                if (isTransitioning || totalSlides === 0) return;
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                if (index === currentIndex) return;
+                isTransitioning = true;
+                currentIndex = index;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                updateUI();
+                setTimeout(() => { isTransitioning = false; }, 400);
+            }
 
-      // ----- update UI (dots, indicator, buttons) -----
-      function updateUI() {
-        dotsContainer.innerHTML = '';
-        for (let i = 0; i < totalSlides; i++) {
-          const dot = document.createElement('button');
-          dot.className = `dot ${i === currentIndex ? 'active' : ''}`;
-          dot.setAttribute('data-index', i);
-          dot.setAttribute('aria-label', `Page ${i+1}`);
-          dot.addEventListener('click', () => goToSlide(i));
-          dotsContainer.appendChild(dot);
-        }
-        pageIndicator.textContent = totalSlides > 0 ? `${currentIndex + 1} / ${totalSlides}` : '0 / 0';
-        prevBtn.disabled = totalSlides === 0 || currentIndex === 0;
-        nextBtn.disabled = totalSlides === 0 || currentIndex === totalSlides - 1;
-      }
+            // ----- render PDF pages -----
+            async function renderPDFPages(arrayBuffer) {
+                try {
+                    // Load the PDF document
+                    pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    totalSlides = pdfDoc.numPages;
+                    
+                    if (totalSlides === 0) {
+                        throw new Error('PDF has no pages');
+                    }
 
-      // ----- go to slide -----
-      function goToSlide(index) {
-        if (isTransitioning || totalSlides === 0) return;
-        if (index < 0) index = totalSlides - 1;
-        if (index >= totalSlides) index = 0;
-        if (index === currentIndex) return;
-        isTransitioning = true;
-        currentIndex = index;
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        updateUI();
-        setTimeout(() => { isTransitioning = false; }, 400);
-      }
+                    // Clear track (remove all children)
+                    while (track.firstChild) {
+                        track.removeChild(track.firstChild);
+                    }
 
-      // ----- render PDF pages -----
-      async function renderPDFPages(arrayBuffer) {
-        try {
-          pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-          totalSlides = pdfDoc.numPages;
-          if (totalSlides === 0) throw new Error('PDF has no pages');
+                    // Create slides for each page
+                    for (let pageNum = 1; pageNum <= totalSlides; pageNum++) {
+                        const page = await pdfDoc.getPage(pageNum);
+                        
+                        // Calculate scale to fit nicely
+                        const viewport = page.getViewport({ scale: 1.0 });
+                        const scale = Math.min(1.5, (600 / viewport.width));
+                        const scaledViewport = page.getViewport({ scale: scale });
 
-          // clear track (keep only slides)
-          while (track.firstChild) track.removeChild(track.firstChild);
+                        // Create canvas
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.width = scaledViewport.width;
+                        canvas.height = scaledViewport.height;
+                        canvas.style.width = '100%';
+                        canvas.style.maxWidth = '600px';
+                        canvas.style.height = 'auto';
 
-          pageCanvases = [];
-          const fragment = document.createDocumentFragment();
+                        // Render PDF page to canvas
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: scaledViewport
+                        };
+                        
+                        await page.render(renderContext).promise;
 
-          for (let pageNum = 1; pageNum <= totalSlides; pageNum++) {
-            const page = await pdfDoc.getPage(pageNum);
-            const viewport = page.getViewport({ scale: 1.5 });
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
+                        // Create slide container
+                        const slide = document.createElement('div');
+                        slide.className = 'slide';
+                        slide.style.display = 'flex';
+                        slide.style.flexDirection = 'column';
+                        slide.style.alignItems = 'center';
+                        slide.style.justifyContent = 'center';
+                        slide.style.padding = '1rem';
+                        slide.style.minHeight = '400px';
 
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        // Create wrapper
+                        const wrapper = document.createElement('div');
+                        wrapper.style.width = '100%';
+                        wrapper.style.display = 'flex';
+                        wrapper.style.flexDirection = 'column';
+                        wrapper.style.alignItems = 'center';
+                        wrapper.style.maxWidth = '600px';
 
-            const slide = document.createElement('div');
-            slide.className = 'slide';
-            slide.style.display = 'flex';
-            slide.style.flexDirection = 'column';
-            slide.style.alignItems = 'center';
-            slide.style.justifyContent = 'center';
-            slide.style.padding = '1rem';
+                        // Append canvas
+                        wrapper.appendChild(canvas);
 
-            const wrapper = document.createElement('div');
-            wrapper.style.width = '100%';
-            wrapper.style.display = 'flex';
-            wrapper.style.flexDirection = 'column';
-            wrapper.style.alignItems = 'center';
+                        // Add page label
+                        const label = document.createElement('div');
+                        label.className = 'page-label';
+                        label.textContent = `Page ${pageNum} of ${totalSlides}`;
+                        wrapper.appendChild(label);
 
-            const canvasClone = canvas.cloneNode(true);
-            canvasClone.style.maxWidth = '100%';
-            canvasClone.style.height = 'auto';
-            canvasClone.style.borderRadius = '12px';
-            canvasClone.style.border = '1px solid #eef2f7';
-            canvasClone.style.background = 'white';
-            canvasClone.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+                        slide.appendChild(wrapper);
+                        track.appendChild(slide);
+                    }
 
-            const label = document.createElement('div');
-            label.className = 'page-label';
-            label.textContent = `Page ${pageNum} of ${totalSlides}`;
+                    // Reset position
+                    currentIndex = 0;
+                    track.style.transform = `translateX(0%)`;
+                    updateUI();
 
-            wrapper.appendChild(canvasClone);
-            wrapper.appendChild(label);
-            slide.appendChild(wrapper);
-            fragment.appendChild(slide);
-            pageCanvases.push(canvasClone);
-          }
+                    // Update file info
+                    const filename = fileInput.files[0]?.name || 'PDF';
+                    fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> ${filename} · ${totalSlides} pages`;
+                    fileStatus.textContent = `✅ ${filename} (${totalSlides} pages)`;
 
-          track.appendChild(fragment);
+                    // Enable/disable buttons
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = (totalSlides <= 1);
 
-          // reset position
-          currentIndex = 0;
-          track.style.transform = `translateX(0%)`;
-          updateUI();
+                } catch (error) {
+                    console.error('PDF error:', error);
+                    alert('Could not render PDF. Please try another file.\nError: ' + error.message);
+                    resetToEmpty();
+                }
+            }
 
-          // update file info
-          const filename = fileInput.files[0]?.name || 'PDF';
-          fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> ${filename} · ${totalSlides} pages`;
-          fileStatus.textContent = `✅ ${filename} (${totalSlides} pages)`;
+            // ----- reset to empty state -----
+            function resetToEmpty() {
+                while (track.firstChild) {
+                    track.removeChild(track.firstChild);
+                }
+                const empty = document.createElement('div');
+                empty.className = 'slide empty-state';
+                empty.id = 'emptySlide';
+                empty.innerHTML = `
+                        <i class="fas fa-file-pdf"></i>
+                        <h4>Drop a PDF to extract pages</h4>
+                        <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
+                    `;
+                track.appendChild(empty);
+                totalSlides = 0;
+                currentIndex = 0;
+                pdfDoc = null;
+                track.style.transform = `translateX(0%)`;
+                updateUI();
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> no PDF`;
+                fileStatus.textContent = '📄 no file loaded';
+            }
 
-          // enable/disable buttons
-          prevBtn.disabled = true;
-          nextBtn.disabled = (totalSlides <= 1);
+            // ----- handle file (from input or drop) -----
+            function handleFile(file) {
+                if (!file) {
+                    alert('No file selected.');
+                    return;
+                }
+                
+                if (file.type !== 'application/pdf') {
+                    alert('Please select a valid PDF file. Selected: ' + file.type);
+                    return;
+                }
 
-        } catch (error) {
-          console.error('PDF error:', error);
-          alert('Could not render PDF. Please try another file.');
-          resetToEmpty();
-        }
-      }
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        await renderPDFPages(e.target.result);
+                    } catch (error) {
+                        console.error('Error in renderPDFPages:', error);
+                        alert('Error rendering PDF: ' + error.message);
+                        resetToEmpty();
+                    }
+                };
+                reader.onerror = function() {
+                    alert('Error reading file.');
+                    resetToEmpty();
+                };
+                reader.readAsArrayBuffer(file);
+            }
 
-      // ----- reset to empty state -----
-      function resetToEmpty() {
-        while (track.firstChild) track.removeChild(track.firstChild);
-        const empty = document.createElement('div');
-        empty.className = 'slide empty-state';
-        empty.id = 'emptySlide';
-        empty.innerHTML = `
-          <i class="fas fa-file-pdf"></i>
-          <h4>Drop a PDF to extract pages</h4>
-          <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
-        `;
-        track.appendChild(empty);
-        totalSlides = 0;
-        currentIndex = 0;
-        pdfDoc = null;
-        pageCanvases = [];
-        track.style.transform = `translateX(0%)`;
-        updateUI();
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-        fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> no PDF`;
-        fileStatus.textContent = '📄 no file loaded';
-      }
+            // ----- EVENT LISTENERS -----
 
-      // ----- handle file (from input or drop) -----
-      function handleFile(file) {
-        if (!file || file.type !== 'application/pdf') {
-          alert('Please select a valid PDF file.');
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          await renderPDFPages(e.target.result);
-        };
-        reader.onerror = () => alert('Error reading file.');
-        reader.readAsArrayBuffer(file);
-      }
+            // Browse button
+            browseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
 
-      // ----- EVENT LISTENERS -----
+            // Click on drop zone -> open file picker
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
 
-      // Browse button
-      browseBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
-      });
+            // File input change
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    handleFile(fileInput.files[0]);
+                }
+                fileInput.value = ''; // allow re-upload same file
+            });
 
-      // Click on drop zone -> open file picker
-      dropZone.addEventListener('click', () => {
-        fileInput.click();
-      });
+            // ----- DRAG & DROP on dropZone -----
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
 
-      // File input change
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-          handleFile(fileInput.files[0]);
-        }
-        fileInput.value = ''; // allow re-upload same file
-      });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
 
-      // ----- DRAG & DROP on dropZone -----
-      dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    handleFile(files[0]);
+                } else {
+                    alert('Please drop a PDF file.');
+                }
+            });
 
-      dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-      });
+            // also allow drop on the whole carousel (for better UX)
+            document.querySelector('.pdf-carousel').addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            document.querySelector('.pdf-carousel').addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+            document.querySelector('.pdf-carousel').addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    handleFile(files[0]);
+                } else {
+                    alert('Please drop a PDF file.');
+                }
+            });
 
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type === 'application/pdf') {
-          handleFile(files[0]);
-        } else {
-          alert('Please drop a PDF file.');
-        }
-      });
+            // ----- carousel controls -----
+            prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+            nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
-      // also allow drop on the whole carousel (for better UX)
-      document.querySelector('.pdf-carousel').addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
-      document.querySelector('.pdf-carousel').addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-      });
-      document.querySelector('.pdf-carousel').addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type === 'application/pdf') {
-          handleFile(files[0]);
-        } else {
-          alert('Please drop a PDF file.');
-        }
-      });
+            // keyboard
+            document.addEventListener('keydown', (e) => {
+                if (totalSlides === 0) return;
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    goToSlide(currentIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    goToSlide(currentIndex + 1);
+                }
+            });
 
-      // ----- carousel controls -----
-      prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
-      nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+            // touch swipe
+            let startX = 0,
+                isSwiping = false;
+            viewport.addEventListener('touchstart', (e) => {
+                if (totalSlides === 0) return;
+                startX = e.touches[0].clientX;
+                isSwiping = true;
+            }, { passive: true });
+            viewport.addEventListener('touchend', (e) => {
+                if (!isSwiping || totalSlides === 0) return;
+                isSwiping = false;
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                if (Math.abs(diff) > 40) {
+                    if (diff > 0) goToSlide(currentIndex + 1);
+                    else goToSlide(currentIndex - 1);
+                }
+            }, { passive: true });
 
-      // keyboard
-      document.addEventListener('keydown', (e) => {
-        if (totalSlides === 0) return;
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentIndex - 1); }
-        else if (e.key === 'ArrowRight') { e.preventDefault(); goToSlide(currentIndex + 1); }
-      });
+            // mouse drag
+            let mouseDown = false,
+                mouseStartX = 0;
+            viewport.addEventListener('mousedown', (e) => {
+                if (totalSlides === 0) return;
+                mouseDown = true;
+                mouseStartX = e.clientX;
+                e.preventDefault();
+            });
+            viewport.addEventListener('mouseup', (e) => {
+                if (!mouseDown || totalSlides === 0) return;
+                mouseDown = false;
+                const diff = mouseStartX - e.clientX;
+                if (Math.abs(diff) > 40) {
+                    if (diff > 0) goToSlide(currentIndex + 1);
+                    else goToSlide(currentIndex - 1);
+                }
+            });
+            viewport.addEventListener('mouseleave', () => { mouseDown = false; });
 
-      // touch swipe
-      let startX = 0, isSwiping = false;
-      viewport.addEventListener('touchstart', (e) => {
-        if (totalSlides === 0) return;
-        startX = e.touches[0].clientX;
-        isSwiping = true;
-      }, { passive: true });
-      viewport.addEventListener('touchend', (e) => {
-        if (!isSwiping || totalSlides === 0) return;
-        isSwiping = false;
-        const endX = e.changedTouches[0].clientX;
-        const diff = startX - endX;
-        if (Math.abs(diff) > 40) {
-          if (diff > 0) goToSlide(currentIndex + 1);
-          else goToSlide(currentIndex - 1);
-        }
-      }, { passive: true });
-
-      // mouse drag
-      let mouseDown = false, mouseStartX = 0;
-      viewport.addEventListener('mousedown', (e) => {
-        if (totalSlides === 0) return;
-        mouseDown = true;
-        mouseStartX = e.clientX;
-        e.preventDefault();
-      });
-      viewport.addEventListener('mouseup', (e) => {
-        if (!mouseDown || totalSlides === 0) return;
-        mouseDown = false;
-        const diff = mouseStartX - e.clientX;
-        if (Math.abs(diff) > 40) {
-          if (diff > 0) goToSlide(currentIndex + 1);
-          else goToSlide(currentIndex - 1);
-        }
-      });
-      viewport.addEventListener('mouseleave', () => { mouseDown = false; });
-
-      // init
-      resetToEmpty();
-    })();
-  </script>
+            // init
+            resetToEmpty();
+        })();
+    </script>
 </body>
 </html>
