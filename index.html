@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Carousel · Drag & Drop Showcase</title>
+    <title>PDF Carousel · Cover & Content View</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
@@ -167,30 +167,101 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 1.5rem;
         }
 
-        .slide canvas {
-            max-width: 100%;
+        /* Cover & Content layout */
+        .pair-container {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            width: 100%;
+            max-width: 850px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cover-container {
+            flex: 1;
+            min-width: 200px;
+            max-width: 350px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cover-container:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .cover-container canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 2px solid #d0d7e2;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            display: block;
+            background: white;
+        }
+
+        .cover-label {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(31, 58, 102, 0.85);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+
+        .content-container {
+            flex: 2;
+            min-width: 280px;
+            max-width: 550px;
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e8edf4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-container canvas {
+            width: 100%;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e8edf4;
-            background: white;
             display: block;
+            background: white;
         }
 
-        .slide .page-label {
-            margin-top: 1rem;
-            font-size: 0.85rem;
+        .content-container .page-label {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
             color: #4d637e;
-            background: #ffffff;
-            padding: 0.3rem 1.5rem;
+            background: #f0f4fc;
+            padding: 0.2rem 1.2rem;
             border-radius: 30px;
             font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e8edf4;
         }
 
+        .content-container .click-hint {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #889bb3;
+        }
+
+        .content-container .click-hint i {
+            margin-right: 4px;
+        }
+
+        /* Empty state */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -213,6 +284,12 @@
             color: #2b405d;
         }
 
+        .empty-state p {
+            color: #889bb3;
+            font-size: 0.9rem;
+        }
+
+        /* Controls */
         .carousel-controls {
             display: flex;
             justify-content: center;
@@ -301,33 +378,19 @@
             color: #1f3a66;
         }
 
-        /* Loading state */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            color: #1f3a66;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .loading i {
-            font-size: 2rem;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
+        @media (max-width: 700px) {
+            .pair-container {
+                flex-direction: column;
+                align-items: center;
             }
-            100% {
-                transform: rotate(360deg);
+            .cover-container {
+                max-width: 280px;
+                width: 100%;
             }
-        }
-
-        @media (max-width: 600px) {
+            .content-container {
+                max-width: 100%;
+                width: 100%;
+            }
             .pdf-carousel {
                 padding: 1.2rem 1rem;
             }
@@ -343,9 +406,6 @@
                 height: 40px;
                 font-size: 1rem;
             }
-            .drop-zone i {
-                font-size: 2.4rem;
-            }
             .carousel-viewport {
                 min-height: 350px;
             }
@@ -359,7 +419,7 @@
         <div class="drop-zone" id="dropZone">
             <i class="fas fa-cloud-upload-alt"></i>
             <h3>Drop your PDF here</h3>
-            <p>or click to browse — each page becomes a slide</p>
+            <p>or click to browse — pages paired as cover + content</p>
             <button class="browse-btn" id="browseBtn"><i class="fas fa-folder-open"></i> Choose PDF</button>
             <input type="file" id="fileInput" accept=".pdf,application/pdf">
             <div class="file-status" id="fileStatus">📄 no file loaded</div>
@@ -367,7 +427,7 @@
 
         <!-- header -->
         <div class="pdf-header">
-            <h2><i class="fas fa-layer-group"></i> PDF Carousel</h2>
+            <h2><i class="fas fa-layer-group"></i> Cover & Content Carousel</h2>
             <span class="page-indicator" id="pageIndicator">0 / 0</span>
         </div>
 
@@ -377,7 +437,8 @@
                 <div class="slide empty-state" id="emptySlide">
                     <i class="fas fa-file-pdf"></i>
                     <h4>Drop a PDF to extract pages</h4>
-                    <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
+                    <p>Odd pages = covers · Even pages = content</p>
+                    <p style="font-size:0.8rem; margin-top:0.5rem; color:#889bb3;">Click the cover to reveal the content</p>
                 </div>
             </div>
         </div>
@@ -390,7 +451,7 @@
         </div>
 
         <div class="pdf-footer">
-            <span><i class="fas fa-print"></i> PDF page carousel · showcase</span>
+            <span><i class="fas fa-print"></i> PDF carousel · cover + content view</span>
             <span class="file-info" id="fileInfo"><i class="far fa-file-pdf"></i> no PDF</span>
         </div>
     </div>
@@ -416,19 +477,20 @@
             let isTransitioning = false;
             let pdfDoc = null;
             let isRendering = false;
+            let pageData = []; // Store page canvases and data
 
             // PDF.js worker
             const pdfjsLib = window.pdfjsLib;
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-            // ----- update UI (dots, indicator, buttons) -----
+            // ----- update UI -----
             function updateUI() {
                 dotsContainer.innerHTML = '';
                 for (let i = 0; i < totalSlides; i++) {
                     const dot = document.createElement('button');
                     dot.className = `dot ${i === currentIndex ? 'active' : ''}`;
                     dot.setAttribute('data-index', i);
-                    dot.setAttribute('aria-label', `Page ${i+1}`);
+                    dot.setAttribute('aria-label', `Pair ${i+1}`);
                     dot.addEventListener('click', () => goToSlide(i));
                     dotsContainer.appendChild(dot);
                 }
@@ -450,57 +512,80 @@
                 setTimeout(() => { isTransitioning = false; }, 400);
             }
 
+            // ----- toggle content visibility on a slide -----
+            function toggleContent(slideElement) {
+                const contentContainer = slideElement.querySelector('.content-container');
+                if (contentContainer) {
+                    const isHidden = contentContainer.style.display === 'none';
+                    contentContainer.style.display = isHidden ? 'flex' : 'none';
+                    // Update hint text
+                    const hint = slideElement.querySelector('.click-hint');
+                    if (hint) {
+                        hint.textContent = isHidden ? '👁️ Click cover to hide' : '👆 Click cover to view';
+                    }
+                }
+            }
+
             // ----- render PDF pages -----
             async function renderPDFPages(arrayBuffer) {
                 if (isRendering) return;
                 isRendering = true;
 
                 try {
-                    // Show loading state
                     fileStatus.textContent = '⏳ Processing PDF...';
 
-                    // Load the PDF document
                     pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    totalSlides = pdfDoc.numPages;
+                    const totalPages = pdfDoc.numPages;
 
-                    if (totalSlides === 0) {
+                    if (totalPages === 0) {
                         throw new Error('PDF has no pages');
                     }
 
-                    // Clear track (remove all children)
+                    // Clear track
                     while (track.firstChild) {
                         track.removeChild(track.firstChild);
                     }
 
-                    // Create slides for each page
-                    for (let pageNum = 1; pageNum <= totalSlides; pageNum++) {
-                        const page = await pdfDoc.getPage(pageNum);
+                    pageData = [];
+                    const maxWidth = 700;
 
-                        // Calculate optimal scale
+                    // First, render all pages to canvases
+                    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                        const page = await pdfDoc.getPage(pageNum);
                         const viewport = page.getViewport({ scale: 1.0 });
-                        const maxWidth = 700;
                         const scale = Math.min(1.8, maxWidth / viewport.width);
                         const scaledViewport = page.getViewport({ scale: scale });
 
-                        // Create canvas
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.width = scaledViewport.width;
                         canvas.height = scaledViewport.height;
-                        canvas.style.width = '100%';
-                        canvas.style.maxWidth = '700px';
-                        canvas.style.height = 'auto';
-                        canvas.style.display = 'block';
 
-                        // Render PDF page to canvas
-                        const renderContext = {
+                        await page.render({
                             canvasContext: context,
                             viewport: scaledViewport
-                        };
+                        }).promise;
 
-                        await page.render(renderContext).promise;
+                        pageData.push({
+                            canvas: canvas,
+                            width: scaledViewport.width,
+                            height: scaledViewport.height,
+                            pageNum: pageNum
+                        });
+                    }
 
-                        // Create slide container
+                    // Group pages into pairs (odd = cover, even = content)
+                    const pairs = [];
+                    for (let i = 0; i < pageData.length; i += 2) {
+                        const cover = pageData[i];
+                        const content = pageData[i + 1] || null; // If odd number of pages, last has no content
+                        pairs.push({ cover, content });
+                    }
+
+                    totalSlides = pairs.length;
+
+                    // Create slides for each pair
+                    pairs.forEach((pair, pairIndex) => {
                         const slide = document.createElement('div');
                         slide.className = 'slide';
                         slide.style.display = 'flex';
@@ -511,38 +596,78 @@
                         slide.style.minHeight = '420px';
                         slide.style.width = '100%';
 
-                        // Create wrapper
-                        const wrapper = document.createElement('div');
-                        wrapper.style.width = '100%';
-                        wrapper.style.display = 'flex';
-                        wrapper.style.flexDirection = 'column';
-                        wrapper.style.alignItems = 'center';
-                        wrapper.style.maxWidth = '750px';
+                        const container = document.createElement('div');
+                        container.className = 'pair-container';
 
-                        // Append canvas
-                        wrapper.appendChild(canvas);
+                        // Cover (odd page)
+                        const coverDiv = document.createElement('div');
+                        coverDiv.className = 'cover-container';
+                        const coverCanvas = pair.cover.canvas.cloneNode(true);
+                        coverCanvas.style.width = '100%';
+                        coverCanvas.style.height = 'auto';
+                        coverCanvas.style.display = 'block';
+                        coverDiv.appendChild(coverCanvas);
 
-                        // Add page label
-                        const label = document.createElement('div');
-                        label.className = 'page-label';
-                        label.textContent = `Page ${pageNum} of ${totalSlides}`;
-                        wrapper.appendChild(label);
+                        const coverLabel = document.createElement('div');
+                        coverLabel.className = 'cover-label';
+                        coverLabel.textContent = `Cover ${Math.floor(pair.cover.pageNum / 2) + 1}`;
+                        coverDiv.appendChild(coverLabel);
 
-                        slide.appendChild(wrapper);
+                        // Content (even page) - if exists
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'content-container';
+                        contentDiv.style.display = 'flex';
+
+                        if (pair.content) {
+                            const contentCanvas = pair.content.canvas.cloneNode(true);
+                            contentCanvas.style.width = '100%';
+                            contentCanvas.style.height = 'auto';
+                            contentCanvas.style.display = 'block';
+                            contentDiv.appendChild(contentCanvas);
+
+                            const label = document.createElement('div');
+                            label.className = 'page-label';
+                            label.textContent = `Page ${pair.content.pageNum}`;
+                            contentDiv.appendChild(label);
+                        } else {
+                            // No content page (odd number of pages)
+                            const placeholder = document.createElement('div');
+                            placeholder.style.padding = '2rem';
+                            placeholder.style.textAlign = 'center';
+                            placeholder.style.color = '#889bb3';
+                            placeholder.innerHTML = `
+                                <i class="fas fa-eye-slash" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
+                                <p>No content page</p>
+                            `;
+                            contentDiv.appendChild(placeholder);
+                        }
+
+                        // Click hint
+                        const hint = document.createElement('div');
+                        hint.className = 'click-hint';
+                        hint.innerHTML = '👆 Click cover to view';
+                        contentDiv.appendChild(hint);
+
+                        // Add click handler to cover to toggle content
+                        coverDiv.addEventListener('click', () => {
+                            toggleContent(slide);
+                        });
+
+                        container.appendChild(coverDiv);
+                        container.appendChild(contentDiv);
+                        slide.appendChild(container);
                         track.appendChild(slide);
-                    }
+                    });
 
                     // Reset position
                     currentIndex = 0;
                     track.style.transform = `translateX(0%)`;
                     updateUI();
 
-                    // Update file info
                     const filename = fileInput.files[0]?.name || 'PDF';
-                    fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> ${filename} · ${totalSlides} pages`;
-                    fileStatus.textContent = `✅ ${filename} (${totalSlides} pages)`;
+                    fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> ${filename} · ${totalSlides} pairs (${pageData.length} pages)`;
+                    fileStatus.textContent = `✅ ${filename} (${pageData.length} pages, ${totalSlides} pairs)`;
 
-                    // Enable/disable buttons
                     prevBtn.disabled = true;
                     nextBtn.disabled = (totalSlides <= 1);
 
@@ -564,14 +689,16 @@
                 empty.className = 'slide empty-state';
                 empty.id = 'emptySlide';
                 empty.innerHTML = `
-                        <i class="fas fa-file-pdf"></i>
-                        <h4>Drop a PDF to extract pages</h4>
-                        <p style="color:#889bb3; font-size:0.9rem;">Drag & drop or click to upload</p>
-                    `;
+                    <i class="fas fa-file-pdf"></i>
+                    <h4>Drop a PDF to extract pages</h4>
+                    <p>Odd pages = covers · Even pages = content</p>
+                    <p style="font-size:0.8rem; margin-top:0.5rem; color:#889bb3;">Click the cover to reveal the content</p>
+                `;
                 track.appendChild(empty);
                 totalSlides = 0;
                 currentIndex = 0;
                 pdfDoc = null;
+                pageData = [];
                 track.style.transform = `translateX(0%)`;
                 updateUI();
                 prevBtn.disabled = true;
@@ -581,7 +708,7 @@
                 isRendering = false;
             }
 
-            // ----- handle file (from input or drop) -----
+            // ----- handle file -----
             function handleFile(file) {
                 if (!file) {
                     alert('No file selected.');
@@ -612,26 +739,23 @@
 
             // ----- EVENT LISTENERS -----
 
-            // Browse button
             browseBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 fileInput.click();
             });
 
-            // Click on drop zone -> open file picker
             dropZone.addEventListener('click', () => {
                 fileInput.click();
             });
 
-            // File input change
             fileInput.addEventListener('change', () => {
                 if (fileInput.files.length > 0) {
                     handleFile(fileInput.files[0]);
                 }
-                fileInput.value = ''; // allow re-upload same file
+                fileInput.value = '';
             });
 
-            // ----- DRAG & DROP on dropZone -----
+            // Drag & Drop
             dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropZone.classList.add('dragover');
@@ -653,7 +777,6 @@
                 }
             });
 
-            // also allow drop on the whole carousel (for better UX)
             document.querySelector('.pdf-carousel').addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropZone.classList.add('dragover');
@@ -673,11 +796,11 @@
                 }
             });
 
-            // ----- carousel controls -----
+            // Carousel controls
             prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
             nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
-            // keyboard
+            // Keyboard
             document.addEventListener('keydown', (e) => {
                 if (totalSlides === 0 || isRendering) return;
                 if (e.key === 'ArrowLeft') {
@@ -689,7 +812,7 @@
                 }
             });
 
-            // touch swipe
+            // Touch swipe
             let startX = 0,
                 isSwiping = false;
             viewport.addEventListener('touchstart', (e) => {
@@ -708,7 +831,7 @@
                 }
             }, { passive: true });
 
-            // mouse drag
+            // Mouse drag
             let mouseDown = false,
                 mouseStartX = 0;
             viewport.addEventListener('mousedown', (e) => {
