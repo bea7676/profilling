@@ -173,7 +173,7 @@
         .flip-card {
             width: 100%;
             max-width: 750px;
-            height: 520px;
+            height: 550px;
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
@@ -214,13 +214,15 @@
 
         .flip-card-front canvas,
         .flip-card-back canvas {
-            width: 100%;
+            width: auto;
             height: auto;
+            max-width: 100%;
             max-height: 400px;
-            object-fit: contain;
             border-radius: 8px;
             display: block;
             background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            object-fit: contain;
         }
 
         .flip-card-front .page-label,
@@ -392,7 +394,7 @@
 
         @media (max-width: 700px) {
             .flip-card {
-                height: 420px;
+                height: 450px;
             }
             .pdf-carousel {
                 padding: 1.2rem 1rem;
@@ -412,6 +414,10 @@
             .carousel-viewport {
                 min-height: 380px;
             }
+            .flip-card-front canvas,
+            .flip-card-back canvas {
+                max-height: 300px;
+            }
             .flip-card-front .flip-hint,
             .flip-card-back .back-hint {
                 font-size: 0.6rem;
@@ -423,11 +429,11 @@
 
         @media (max-width: 500px) {
             .flip-card {
-                height: 340px;
+                height: 370px;
             }
             .flip-card-front canvas,
             .flip-card-back canvas {
-                max-height: 260px;
+                max-height: 240px;
             }
         }
     </style>
@@ -553,20 +559,26 @@
                     }
 
                     pageData = [];
-                    const maxWidth = 600;
 
                     // Render all pages
                     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                         const page = await pdfDoc.getPage(pageNum);
+                        
+                        // Get viewport at a good scale
                         const viewport = page.getViewport({ scale: 1.0 });
-                        const scale = Math.min(1.5, maxWidth / viewport.width);
-                        const scaledViewport = page.getViewport({ scale: scale });
+                        const maxDimension = 600;
+                        let scale = 1.0;
+                        if (viewport.width > maxDimension || viewport.height > maxDimension) {
+                            scale = Math.min(maxDimension / viewport.width, maxDimension / viewport.height);
+                        }
+                        const scaledViewport = page.getViewport({ scale: scale * 1.2 });
 
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.width = scaledViewport.width;
                         canvas.height = scaledViewport.height;
 
+                        // Render the page
                         await page.render({
                             canvasContext: context,
                             viewport: scaledViewport
@@ -608,11 +620,17 @@
                         coverBadge.textContent = `📖 ${Math.floor(pair.front.pageNum / 2) + 1}`;
                         frontDiv.appendChild(coverBadge);
 
-                        const frontCanvas = pair.front.canvas.cloneNode(true);
-                        frontCanvas.style.width = '100%';
+                        // Clone canvas with proper sizing
+                        const frontCanvas = document.createElement('canvas');
+                        frontCanvas.width = pair.front.canvas.width;
+                        frontCanvas.height = pair.front.canvas.height;
+                        const frontCtx = frontCanvas.getContext('2d');
+                        frontCtx.drawImage(pair.front.canvas, 0, 0);
+                        frontCanvas.style.maxWidth = '100%';
+                        frontCanvas.style.maxHeight = '400px';
+                        frontCanvas.style.width = 'auto';
                         frontCanvas.style.height = 'auto';
-                        frontCanvas.style.maxHeight = '380px';
-                        frontCanvas.style.objectFit = 'contain';
+                        frontCanvas.style.display = 'block';
                         frontDiv.appendChild(frontCanvas);
 
                         const frontLabel = document.createElement('div');
@@ -630,11 +648,17 @@
                         backDiv.className = 'flip-card-back';
 
                         if (pair.back) {
-                            const backCanvas = pair.back.canvas.cloneNode(true);
-                            backCanvas.style.width = '100%';
+                            // Clone canvas with proper sizing
+                            const backCanvas = document.createElement('canvas');
+                            backCanvas.width = pair.back.canvas.width;
+                            backCanvas.height = pair.back.canvas.height;
+                            const backCtx = backCanvas.getContext('2d');
+                            backCtx.drawImage(pair.back.canvas, 0, 0);
+                            backCanvas.style.maxWidth = '100%';
+                            backCanvas.style.maxHeight = '400px';
+                            backCanvas.style.width = 'auto';
                             backCanvas.style.height = 'auto';
-                            backCanvas.style.maxHeight = '380px';
-                            backCanvas.style.objectFit = 'contain';
+                            backCanvas.style.display = 'block';
                             backDiv.appendChild(backCanvas);
 
                             const backLabel = document.createElement('div');
