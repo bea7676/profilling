@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Carousel · Big Vertical Flip Book</title>
+    <title>PDF Carousel · MASSIVE Flip Book</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
@@ -15,24 +15,29 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
-            min-height: 100vh;
+        }
+
+        body {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
+            padding: 0.3rem;
         }
 
         .pdf-carousel {
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
+            height: 99vh;
             background: #fcfcfd;
-            border-radius: 40px;
+            border-radius: 32px;
             box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.04);
-            padding: 1.5rem 2rem 1.5rem;
+            padding: 0.8rem 1.2rem 0.8rem;
             border: 1px solid rgba(255, 255, 255, 0.6);
-            height: 98vh;
             display: flex;
             flex-direction: column;
         }
@@ -40,10 +45,10 @@
         .drop-zone {
             background: #f2f7ff;
             border: 3px dashed #b8cae0;
-            border-radius: 32px;
-            padding: 1.2rem 1.8rem;
+            border-radius: 28px;
+            padding: 0.7rem 1.5rem;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.6rem;
             transition: all 0.2s ease;
             cursor: pointer;
             position: relative;
@@ -58,33 +63,33 @@
         }
 
         .drop-zone i {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: #1f3a66;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
             display: block;
         }
 
         .drop-zone h3 {
             font-weight: 500;
             color: #0b1a2b;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .drop-zone p {
             color: #4d637e;
-            font-size: 0.8rem;
-            margin-top: 0.1rem;
+            font-size: 0.75rem;
+            margin-top: 0.05rem;
         }
 
         .drop-zone .browse-btn {
             background: #1f3a66;
             color: white;
             border: none;
-            padding: 0.3rem 1.5rem;
+            padding: 0.2rem 1.2rem;
             border-radius: 60px;
             font-weight: 500;
-            margin-top: 0.4rem;
-            font-size: 0.8rem;
+            margin-top: 0.2rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: 0.15s;
             display: inline-block;
@@ -101,12 +106,12 @@
         }
 
         .drop-zone .file-status {
-            margin-top: 0.3rem;
-            font-size: 0.75rem;
+            margin-top: 0.2rem;
+            font-size: 0.7rem;
             color: #1f3a66;
             font-weight: 450;
             background: #eaf0f8;
-            padding: 0.1rem 1rem;
+            padding: 0.05rem 0.8rem;
             border-radius: 40px;
             display: inline-block;
         }
@@ -116,18 +121,18 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #d0d7e2;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.8rem;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
             flex-shrink: 0;
         }
 
         .pdf-header h2 {
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #1f2a3e;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .pdf-header h2 i {
@@ -136,19 +141,19 @@
 
         .page-indicator {
             background: #eef2f7;
-            padding: 0.2rem 1rem;
+            padding: 0.15rem 0.8rem;
             border-radius: 40px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 500;
             color: #1f2a3e;
         }
 
         .carousel-viewport {
             overflow: hidden;
-            border-radius: 24px;
+            border-radius: 20px;
             background: #f8f9fc;
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.5rem;
             position: relative;
             flex: 1;
             min-height: 0;
@@ -166,7 +171,7 @@
 
         .slide {
             flex: 0 0 100%;
-            padding: 1rem;
+            padding: 0.5rem;
             background: #f8f9fc;
             display: flex;
             align-items: center;
@@ -177,9 +182,9 @@
 
         .flip-card {
             width: 100%;
-            max-width: 850px;
+            max-width: 950px;
             height: 100%;
-            max-height: 85vh;
+            max-height: 90vh;
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
@@ -206,7 +211,7 @@
             background: white;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             border: 1px solid #e8edf4;
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .flip-card-front {
@@ -222,8 +227,8 @@
         .flip-card-back canvas {
             width: auto;
             height: auto;
-            max-width: 95%;
-            max-height: 88%;
+            max-width: 98%;
+            max-height: 92%;
             border-radius: 8px;
             display: block;
             background: white;
@@ -233,11 +238,11 @@
 
         .flip-card-front .page-label,
         .flip-card-back .page-label {
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            font-size: 0.75rem;
             color: #4d637e;
             background: #f0f4fc;
-            padding: 0.15rem 1rem;
+            padding: 0.1rem 0.8rem;
             border-radius: 30px;
             font-weight: 500;
             flex-shrink: 0;
@@ -245,42 +250,42 @@
 
         .flip-card-front .flip-hint {
             position: absolute;
-            bottom: 15px;
-            right: 15px;
+            bottom: 12px;
+            right: 12px;
             background: rgba(31, 58, 102, 0.85);
             color: white;
-            padding: 0.25rem 0.8rem;
+            padding: 0.2rem 0.7rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .flip-card-back .back-hint {
             position: absolute;
-            bottom: 15px;
-            right: 15px;
+            bottom: 12px;
+            right: 12px;
             background: rgba(100, 100, 100, 0.15);
             color: #4d637e;
-            padding: 0.25rem 0.8rem;
+            padding: 0.2rem 0.7rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .flip-card-front .cover-badge {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             background: #1f3a66;
             color: white;
-            padding: 0.2rem 0.8rem;
+            padding: 0.15rem 0.7rem;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 500;
         }
 
@@ -296,7 +301,7 @@
         }
 
         .empty-state i {
-            font-size: 4rem;
+            font-size: 5rem;
             color: #b8cae0;
             margin-bottom: 0.8rem;
         }
@@ -304,11 +309,12 @@
         .empty-state h4 {
             font-weight: 400;
             color: #2b405d;
+            font-size: 1.5rem;
         }
 
         .empty-state p {
             color: #889bb3;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
         }
 
         .carousel-controls {
@@ -317,16 +323,16 @@
             align-items: center;
             gap: 1.5rem;
             flex-shrink: 0;
-            padding: 0.3rem 0;
+            padding: 0.2rem 0;
         }
 
         .carousel-controls button {
             background: #f0f4fc;
             border: none;
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
             border-radius: 60px;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: #1f3a66;
             cursor: pointer;
             transition: all 0.2s;
@@ -357,8 +363,8 @@
         }
 
         .dot {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 20px;
             background: #ccd7e6;
             transition: all 0.25s;
@@ -369,7 +375,7 @@
 
         .dot.active {
             background: #1f3a66;
-            width: 30px;
+            width: 34px;
         }
 
         .dot:hover {
@@ -377,12 +383,12 @@
         }
 
         .pdf-footer {
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            font-size: 0.65rem;
             color: #66758b;
             text-align: center;
             border-top: 1px solid #e2e8f0;
-            padding-top: 0.5rem;
+            padding-top: 0.3rem;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -396,80 +402,138 @@
         .file-info {
             background: #eef3fa;
             border-radius: 40px;
-            padding: 0.1rem 0.8rem;
-            font-size: 0.75rem;
+            padding: 0.05rem 0.7rem;
+            font-size: 0.7rem;
             color: #1f3a66;
         }
 
         @media (max-width: 900px) {
             .flip-card {
-                max-height: 78vh;
+                max-height: 85vh;
             }
             .pdf-carousel {
-                padding: 1rem;
-                height: 97vh;
+                padding: 0.6rem 0.8rem;
+            }
+            .empty-state i {
+                font-size: 3.5rem;
+            }
+            .empty-state h4 {
+                font-size: 1.2rem;
+            }
+            .empty-state p {
+                font-size: 0.9rem;
             }
         }
 
         @media (max-width: 700px) {
             .pdf-carousel {
-                padding: 0.8rem;
-                height: 96vh;
-                border-radius: 24px;
+                padding: 0.4rem 0.5rem;
+                border-radius: 20px;
+                height: 98vh;
             }
             .slide {
-                padding: 0.5rem;
+                padding: 0.3rem;
             }
             .flip-card {
-                max-height: 70vh;
+                max-height: 72vh;
             }
             .drop-zone {
-                padding: 0.8rem 1rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .drop-zone i {
+                font-size: 1.4rem;
+            }
+            .drop-zone h3 {
+                font-size: 0.75rem;
+            }
+            .drop-zone p {
+                font-size: 0.65rem;
             }
             .carousel-controls button {
                 width: 40px;
                 height: 40px;
                 font-size: 1rem;
             }
+            .carousel-controls {
+                gap: 1rem;
+            }
+            .dot {
+                width: 10px;
+                height: 10px;
+            }
+            .dot.active {
+                width: 24px;
+            }
             .flip-card-front .flip-hint,
             .flip-card-back .back-hint {
-                font-size: 0.55rem;
-                padding: 0.15rem 0.6rem;
-                bottom: 10px;
-                right: 10px;
+                font-size: 0.5rem;
+                padding: 0.1rem 0.5rem;
+                bottom: 8px;
+                right: 8px;
             }
             .flip-card-front .cover-badge {
-                font-size: 0.65rem;
-                padding: 0.15rem 0.6rem;
-                top: 10px;
-                left: 10px;
+                font-size: 0.6rem;
+                padding: 0.1rem 0.5rem;
+                top: 8px;
+                left: 8px;
             }
             .flip-card-front .page-label,
             .flip-card-back .page-label {
-                font-size: 0.7rem;
-                padding: 0.1rem 0.8rem;
+                font-size: 0.65rem;
+                padding: 0.05rem 0.6rem;
+            }
+            .pdf-header h2 {
+                font-size: 0.75rem;
+            }
+            .page-indicator {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.6rem;
+            }
+            .empty-state i {
+                font-size: 2.5rem;
+            }
+            .empty-state h4 {
+                font-size: 1rem;
+            }
+            .empty-state p {
+                font-size: 0.8rem;
             }
         }
 
         @media (max-width: 500px) {
             .flip-card {
-                max-height: 60vh;
+                max-height: 62vh;
             }
             .drop-zone i {
-                font-size: 1.6rem;
+                font-size: 1.2rem;
             }
             .drop-zone h3 {
-                font-size: 0.85rem;
+                font-size: 0.65rem;
             }
             .drop-zone p {
-                font-size: 0.7rem;
+                font-size: 0.55rem;
             }
-            .pdf-header h2 {
-                font-size: 0.85rem;
-            }
-            .page-indicator {
+            .drop-zone .browse-btn {
                 font-size: 0.65rem;
-                padding: 0.15rem 0.8rem;
+                padding: 0.1rem 0.8rem;
+            }
+            .carousel-controls button {
+                width: 34px;
+                height: 34px;
+                font-size: 0.8rem;
+            }
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+            .dot.active {
+                width: 20px;
+            }
+            .pdf-footer {
+                font-size: 0.55rem;
+            }
+            .file-info {
+                font-size: 0.6rem;
             }
         }
     </style>
@@ -479,15 +543,15 @@
 
         <div class="drop-zone" id="dropZone">
             <i class="fas fa-cloud-upload-alt"></i>
-            <h3>Drop your PDF here</h3>
-            <p>or click to browse — each pair becomes a flip card</p>
-            <button class="browse-btn" id="browseBtn"><i class="fas fa-folder-open"></i> Choose PDF</button>
+            <h3>Drop PDF Here</h3>
+            <p>or click to browse</p>
+            <button class="browse-btn" id="browseBtn"><i class="fas fa-folder-open"></i> Choose</button>
             <input type="file" id="fileInput" accept=".pdf,application/pdf">
-            <div class="file-status" id="fileStatus">📄 no file loaded</div>
+            <div class="file-status" id="fileStatus">📄 no file</div>
         </div>
 
         <div class="pdf-header">
-            <h2><i class="fas fa-layer-group"></i> BIG Vertical Flip Book</h2>
+            <h2><i class="fas fa-layer-group"></i> MASSIVE Flip Book</h2>
             <span class="page-indicator" id="pageIndicator">0 / 0</span>
         </div>
 
@@ -497,7 +561,7 @@
                     <i class="fas fa-file-pdf"></i>
                     <h4>Drop a PDF to create flip cards</h4>
                     <p>Odd pages = front · Even pages = back</p>
-                    <p style="font-size:0.8rem; margin-top:0.5rem; color:#889bb3;">Click the card to flip it</p>
+                    <p style="font-size:0.9rem; margin-top:0.5rem; color:#889bb3;">Click the card to flip it</p>
                 </div>
             </div>
         </div>
@@ -509,7 +573,7 @@
         </div>
 
         <div class="pdf-footer">
-            <span><i class="fas fa-print"></i> Big flip book · cover + content</span>
+            <span><i class="fas fa-print"></i> Full-screen flip book</span>
             <span class="file-info" id="fileInfo"><i class="far fa-file-pdf"></i> no PDF</span>
         </div>
     </div>
@@ -568,7 +632,7 @@
                 isRendering = true;
 
                 try {
-                    fileStatus.textContent = '⏳ Processing PDF...';
+                    fileStatus.textContent = '⏳ Processing...';
 
                     const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     const totalPages = pdfDoc.numPages;
@@ -585,7 +649,7 @@
 
                     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                         const page = await pdfDoc.getPage(pageNum);
-                        const viewport = page.getViewport({ scale: 2.0 });
+                        const viewport = page.getViewport({ scale: 2.2 });
                         
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
@@ -630,7 +694,7 @@
 
                         const frontCanvas = pair.front.canvas;
                         frontCanvas.style.maxWidth = '100%';
-                        frontCanvas.style.maxHeight = '88%';
+                        frontCanvas.style.maxHeight = '92%';
                         frontCanvas.style.width = 'auto';
                         frontCanvas.style.height = 'auto';
                         frontCanvas.style.display = 'block';
@@ -643,7 +707,7 @@
 
                         const flipHint = document.createElement('div');
                         flipHint.className = 'flip-hint';
-                        flipHint.innerHTML = '<i class="fas fa-arrows-rotate"></i> Click to flip';
+                        flipHint.innerHTML = '<i class="fas fa-arrows-rotate"></i> Flip';
                         frontDiv.appendChild(flipHint);
 
                         // BACK
@@ -653,7 +717,7 @@
                         if (pair.back) {
                             const backCanvas = pair.back.canvas;
                             backCanvas.style.maxWidth = '100%';
-                            backCanvas.style.maxHeight = '88%';
+                            backCanvas.style.maxHeight = '92%';
                             backCanvas.style.width = 'auto';
                             backCanvas.style.height = 'auto';
                             backCanvas.style.display = 'block';
@@ -671,14 +735,14 @@
                             placeholder.innerHTML = `
                                 <i class="fas fa-eye-slash" style="font-size:3rem; display:block; margin-bottom:0.5rem;"></i>
                                 <p style="font-size:1.1rem;">No content page</p>
-                                <p style="font-size:0.8rem;">This is the last page</p>
+                                <p style="font-size:0.8rem;">Last page</p>
                             `;
                             backDiv.appendChild(placeholder);
                         }
 
                         const backHint = document.createElement('div');
                         backHint.className = 'back-hint';
-                        backHint.innerHTML = '<i class="fas fa-undo"></i> Click to flip back';
+                        backHint.innerHTML = '<i class="fas fa-undo"></i> Flip back';
                         backDiv.appendChild(backHint);
 
                         flipCard.appendChild(frontDiv);
@@ -699,7 +763,7 @@
                     const filename = fileInput.files[0]?.name || 'PDF';
                     fileInfo.innerHTML =
                         `<i class="far fa-file-pdf"></i> ${filename} · ${totalSlides} cards (${pageData.length} pages)`;
-                    fileStatus.textContent = `✅ ${filename} (${pageData.length} pages, ${totalSlides} cards)`;
+                    fileStatus.textContent = `✅ ${filename} (${pageData.length} pg, ${totalSlides} cards)`;
 
                     prevBtn.disabled = true;
                     nextBtn.disabled = (totalSlides <= 1);
@@ -724,7 +788,7 @@
                     <i class="fas fa-file-pdf"></i>
                     <h4>Drop a PDF to create flip cards</h4>
                     <p>Odd pages = front · Even pages = back</p>
-                    <p style="font-size:0.8rem; margin-top:0.5rem; color:#889bb3;">Click the card to flip it</p>
+                    <p style="font-size:0.9rem; margin-top:0.5rem; color:#889bb3;">Click the card to flip it</p>
                 `;
                 track.appendChild(empty);
                 totalSlides = 0;
@@ -735,7 +799,7 @@
                 prevBtn.disabled = true;
                 nextBtn.disabled = true;
                 fileInfo.innerHTML = `<i class="far fa-file-pdf"></i> no PDF`;
-                fileStatus.textContent = '📄 no file loaded';
+                fileStatus.textContent = '📄 no file';
                 isRendering = false;
             }
 
